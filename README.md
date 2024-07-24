@@ -1,5 +1,8 @@
 _Brought to you by the Bevy Jam working group._
 
+# Itch.io Link
+[itch.io](https://tinygodzilla.itch.io/tinys-bevy-playground)
+
 # Bevy Quickstart
 
 This template is a great way to get started on a new [Bevy](https://bevyengine.org/) game—especially for a game jam!
