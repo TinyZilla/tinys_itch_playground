@@ -5,6 +5,9 @@ use bevy::{
 };
 
 pub(super) fn plugin(app: &mut App) {
+    app.register_type::<HandleMap<MeshKey>>();
+    app.init_resource::<HandleMap<MeshKey>>();
+
     app.register_type::<HandleMap<ImageKey>>();
     app.init_resource::<HandleMap<ImageKey>>();
 
@@ -13,6 +16,32 @@ pub(super) fn plugin(app: &mut App) {
 
     app.register_type::<HandleMap<SoundtrackKey>>();
     app.init_resource::<HandleMap<SoundtrackKey>>();
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Reflect)]
+pub enum MeshKey {
+    Torus,
+}
+
+impl AssetKey for MeshKey {
+    type Asset = Mesh;
+}
+
+impl FromWorld for HandleMap<MeshKey> {
+    fn from_world(world: &mut World) -> Self {
+        let asset_server = world.resource::<AssetServer>();
+        [(
+            MeshKey::Torus,
+            asset_server.load(
+                GltfAssetLabel::Primitive {
+                    mesh: 0,
+                    primitive: 0,
+                }
+                .from_asset("models/torus.gltf"),
+            ),
+        )]
+        .into()
+    }
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Reflect)]
