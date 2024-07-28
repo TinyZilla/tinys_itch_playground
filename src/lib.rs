@@ -1,11 +1,15 @@
 #[cfg(feature = "dev")]
 mod dev_tools;
+mod game;
+mod core;
 
 use bevy::{
     asset::AssetMetaCheck,
     audio::{AudioPlugin, Volume},
     prelude::*,
 };
+
+use crate::core::state::AppUpdateState;
 
 pub struct AppPlugin;
 
@@ -14,11 +18,8 @@ impl Plugin for AppPlugin {
         // Order new `AppStep` variants by adding them here:
         app.configure_sets(
             Update,
-            (AppSet::TickTimers, AppSet::RecordInput, AppSet::Update).chain(),
+            (AppUpdateState::TickTimers, AppUpdateState::RecordInput, AppUpdateState::Update).chain(),
         );
-
-        // Spawn the main camera.
-        app.add_systems(Startup, spawn_camera);
 
         // Add Bevy plugins.
         app.add_plugins(
@@ -50,36 +51,10 @@ impl Plugin for AppPlugin {
         );
 
         // Add other plugins.
+        app.add_plugins(game::GamePlugin);
 
         // Enable dev tools for dev builds.
         #[cfg(feature = "dev")]
         app.add_plugins(dev_tools::plugin);
     }
-}
-
-/// High-level groupings of systems for the app in the `Update` schedule.
-/// When adding a new variant, make sure to order it in the `configure_sets`
-/// call above.
-#[derive(SystemSet, Debug, Clone, Copy, Eq, PartialEq, Hash)]
-enum AppSet {
-    /// Tick timers.
-    TickTimers,
-    /// Record player input.
-    RecordInput,
-    /// Do everything else (consider splitting this into further variants).
-    Update,
-}
-
-fn spawn_camera(mut commands: Commands) {
-    commands.spawn((
-        Name::new("Camera"),
-        Camera3dBundle::default(),
-        // Render all UI to this camera.
-        // Not strictly necessary since we only use one camera,
-        // but if we don't use this component, our UI will disappear as soon
-        // as we add another camera. This includes indirect ways of adding cameras like using
-        // [ui node outlines](https://bevyengine.org/news/bevy-0-14/#ui-node-outline-gizmos)
-        // for debugging. So it's good to have this here for future-proofing.
-        IsDefaultUiCamera,
-    ));
 }
