@@ -1,8 +1,5 @@
 #[cfg(feature = "dev")]
 mod dev_tools;
-mod game;
-mod screen;
-mod ui;
 
 use bevy::{
     asset::AssetMetaCheck,
@@ -53,7 +50,6 @@ impl Plugin for AppPlugin {
         );
 
         // Add other plugins.
-        app.add_plugins((game::plugin, screen::plugin, ui::plugin));
 
         // Enable dev tools for dev builds.
         #[cfg(feature = "dev")]
@@ -77,7 +73,7 @@ enum AppSet {
 fn spawn_camera(mut commands: Commands) {
     commands.spawn((
         Name::new("Camera"),
-        Camera2dBundle::default(),
+        Camera3dBundle::default(),
         // Render all UI to this camera.
         // Not strictly necessary since we only use one camera,
         // but if we don't use this component, our UI will disappear as soon
