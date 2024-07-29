@@ -4,7 +4,8 @@ use bevy::prelude::{ States, SystemSet };
 #[derive(States, Debug, Hash, PartialEq, Eq, Clone, Default)]
 pub enum GameState {
     #[default]
-    InGame
+    Loading,
+    InGame,
 }
 
 /// High-level groupings of systems for the app in the `Update` schedule.

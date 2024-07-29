@@ -9,7 +9,9 @@ use bevy::{
     prelude::*,
 };
 
-use crate::core::state::AppUpdateState;
+use bevy_panorbit_camera::PanOrbitCameraPlugin;
+
+use crate::core::states::AppUpdateState;
 
 pub struct AppPlugin;
 
@@ -49,6 +51,9 @@ impl Plugin for AppPlugin {
                     ..default()
                 }),
         );
+
+        // Add External Plugins
+        app.add_plugins(PanOrbitCameraPlugin);
 
         // Add other plugins.
         app.add_plugins(game::GamePlugin);

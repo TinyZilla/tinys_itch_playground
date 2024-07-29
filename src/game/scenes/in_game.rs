@@ -1,13 +1,18 @@
 
 use bevy::prelude::*;
 
-use crate::core::state::GameState;
+use crate::core::states::GameState;
+use crate::core::assets::HandleMap;
+use crate::core::assets::prelude::*;
+
+use bevy_panorbit_camera::PanOrbitCamera;
+
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(GameState::InGame), enter_in_game);
 }
 
-fn enter_in_game(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials:ResMut<Assets<StandardMaterial>>) {
+fn enter_in_game(mut commands: Commands, mesh_handles: Res<HandleMap<MeshKey>>, mut materials:ResMut<Assets<StandardMaterial>>) {
 
     // Make a material for the Cube
     // You can also add assets directly to their Assets<T> storage:
@@ -16,14 +21,11 @@ fn enter_in_game(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut m
         ..default()
     });
     
-    // Load the Cube As a mesh.
-    let cube_handle = meshes.add(Cuboid::default());
-
-    // Spawn a cube
+    // Spawn a Mesh
     commands.spawn((
-        Name::new("Cube"),
+        Name::new("torus"),
         PbrBundle {
-            mesh: cube_handle,
+            mesh: mesh_handles[&MeshKey::Torus].clone_weak(),
             material: material_handle.clone(),
             ..default()
         },
@@ -40,6 +42,7 @@ fn enter_in_game(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut m
         StateScoped(GameState::InGame)
     ));
 
+    // Setup the Camera
     commands.spawn((
         Name::new("Camera"),
         Camera3dBundle{
@@ -47,6 +50,7 @@ fn enter_in_game(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut m
             ..default()
         },
         IsDefaultUiCamera,
+        PanOrbitCamera::default(),
         StateScoped(GameState::InGame)
     ));
     
