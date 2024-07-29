@@ -27,6 +27,19 @@ fn enter_in_game(mut commands: Commands, mesh_handles: Res<HandleMap<MeshKey>>, 
         PbrBundle {
             mesh: mesh_handles[&MeshKey::Torus].clone_weak(),
             material: material_handle.clone(),
+            transform: Transform::from_translation(Vec3::Y * 1.25),
+            ..default()
+        },
+        StateScoped(GameState::InGame)
+    ));
+
+    // Spawn a Floor
+    commands.spawn((
+        Name::new("Floor"),
+        PbrBundle {
+            mesh: mesh_handles[&MeshKey::Plane].clone_weak(),
+            material: material_handle.clone(),
+            transform: Transform::from_scale(Vec3::splat(10.0)),
             ..default()
         },
         StateScoped(GameState::InGame)

@@ -1,16 +1,10 @@
-use bevy::prelude::{ 
-    FromWorld,
-    Reflect,
-    AssetServer,
-    World,
-    Mesh,
-    GltfAssetLabel
-};
+use bevy::prelude::*;
 use super::{AssetKey, HandleMap};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Reflect)]
 pub enum MeshKey {
     Torus,
+    Plane,
 }
 
 impl AssetKey for MeshKey {
@@ -29,6 +23,10 @@ impl FromWorld for HandleMap<MeshKey> {
                 }
                 .from_asset("mesh/torus.gltf"),
             ),
+        ),
+        (
+            MeshKey::Plane,
+            asset_server.add(Plane3d::default().into())
         )]
         .into()
     }
