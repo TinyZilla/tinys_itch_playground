@@ -81,3 +81,6 @@ inherits = "release"
 opt-level = 3
 # Keep debug information in the binary.
 strip = "none"
+
+[build]
+rustflags = ["--cfg=web_sys_unstable_apis"]
