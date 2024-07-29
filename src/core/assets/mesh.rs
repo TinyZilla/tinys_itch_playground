@@ -26,7 +26,7 @@ impl FromWorld for HandleMap<MeshKey> {
         ),
         (
             MeshKey::Plane,
-            asset_server.add(Plane3d::default().into())
+            asset_server.add(Plane3d::new(Vec3::new(0., 1., 0.), Vec2::new(60., 60.)).into())
         )]
         .into()
     }

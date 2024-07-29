@@ -10,7 +10,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(GameState::Loading), (setup_loading_screen, asset_loader::load_assets));
     app.add_systems(
         FixedUpdate,
-        continue_to_game.run_if(in_state(GameState::Loading).and_then(asset_loader::all_assets_loaded).and_then(input_just_pressed(KeyCode::Escape))),
+        continue_to_game.run_if(in_state(GameState::Loading).and_then(asset_loader::all_assets_loaded).and_then(input_just_pressed(KeyCode::Enter).or_else(input_just_pressed(KeyCode::Space)))),
     );
 }
 

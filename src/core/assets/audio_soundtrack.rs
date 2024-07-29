@@ -9,7 +9,6 @@ use super::{AssetKey, HandleMap};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Reflect)]
 pub enum SoundtrackKey {
-    Credits,
     Gameplay,
 }
 
@@ -22,12 +21,8 @@ impl FromWorld for HandleMap<SoundtrackKey> {
         let asset_server = world.resource::<AssetServer>();
         [
             (
-                SoundtrackKey::Credits,
-                asset_server.load("audio/soundtracks/Monkeys Spinning Monkeys.ogg"),
-            ),
-            (
                 SoundtrackKey::Gameplay,
-                asset_server.load("audio/soundtracks/Fluffing A Duck.ogg"),
+                asset_server.load("audio/soundtracks/zzz pull theme.ogg"),
             ),
         ]
         .into()
