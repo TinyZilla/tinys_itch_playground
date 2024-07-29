@@ -6,8 +6,8 @@ edition = "2021"
 
 [dependencies]
 bevy = { version = "0.14", features = ["wayland"] }
-bevy-inspector-egui = "0.25.1"
-bevy_panorbit_camera = { version = "0.19.1", default-features = false }
+# bevy-inspector-egui = "0.25.1"
+bevy_panorbit_camera = "0.19.1"
 # Disable low-severity logs at compile time for performance.
 log = { version = "0.4", features = [
     "max_level_debug",
@@ -81,6 +81,3 @@ inherits = "release"
 opt-level = 3
 # Keep debug information in the binary.
 strip = "none"
-
-[build]
-rustflags = ["--cfg=web_sys_unstable_apis"]
