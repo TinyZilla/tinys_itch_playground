@@ -12,7 +12,7 @@ impl Plugin for CameraPlugin {
 
 fn spawn_camera(mut commands: Commands) {
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_translation(Vec3::new(0., CAMERA_DISTANCE, 0.)).looking_at(Vec3::ZERO, Vec3::Z),
+        transform: Transform::from_translation(Vec3::new(0., CAMERA_DISTANCE, 0.)).with_rotation(Quat::from_rotation_x(f32::to_radians(-90.))),
         ..default()
     });
 }

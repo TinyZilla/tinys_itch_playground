@@ -1,7 +1,6 @@
 use avian3d::prelude::*;
 use bevy::{math::VectorSpace, prelude::*};
 
-const INERTIA_SCALAR: f32 = 50.0;
 const STARTING_TRANSLATION: Vec3 = Vec3::new(0., 0., 0.);
 
 #[derive(Component)]
@@ -20,8 +19,8 @@ fn spawn_spaceship(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         Name::new("Spaceship"),
         MassPropertiesBundle {
-            mass: Mass(0.05),
-            inertia: Inertia(Mat3::IDENTITY.mul_scalar(INERTIA_SCALAR)),
+            mass: Mass(1.),
+            inertia: Inertia(Mat3::IDENTITY),
             center_of_mass: CenterOfMass(Vec3::Y * -0.25),
             ..default()
         },
@@ -40,19 +39,26 @@ fn spawn_spaceship(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 fn speen_spaceship_on_button_press(mut query: Query<&mut ExternalAngularImpulse, With<Spaceship>>, key_press: Res<ButtonInput<KeyCode>>) {
-    if key_press.just_pressed(KeyCode::Space) {
-        info!("Pressed Space Bar");
+    if key_press.just_pressed(KeyCode::KeyQ) {
+        info!("Pressed Q key");
         let mut spaceship_ang_impulse: Mut<ExternalAngularImpulse> = query.single_mut();
-        spaceship_ang_impulse.apply_impulse(Vec3::Y * 500.);
+        spaceship_ang_impulse.apply_impulse(Vec3::Y);
+        // spaceship_transform.rotate_local_z(f32::to_radians(180.0) * time.delta_seconds());    
+    }
+    if key_press.just_pressed(KeyCode::KeyE) {
+        info!("Pressed E key");
+        let mut spaceship_ang_impulse: Mut<ExternalAngularImpulse> = query.single_mut();
+        spaceship_ang_impulse.apply_impulse(-Vec3::Y);
         // spaceship_transform.rotate_local_z(f32::to_radians(180.0) * time.delta_seconds());    
     }
 }
 
-fn move_spaceship_on_button_press(mut query: Query<(&mut ExternalImpulse, &GlobalTransform), With<Spaceship>>, key_press: Res<ButtonInput<KeyCode>>) {
-    if key_press.just_pressed(KeyCode::KeyQ) {
-        info!("Pressed Q key");
-        let (mut external_force, global_transform) = query.single_mut();
+fn move_spaceship_on_button_press(mut query: Query<(&mut ExternalImpulse, &Transform), With<Spaceship>>, key_press: Res<ButtonInput<KeyCode>>) {
+    if key_press.just_pressed(KeyCode::Space) {
+        info!("Pressed Space Bar");
+        let (mut external_force, transform) = query.single_mut();
         external_force.with_persistence(false);
-        external_force.apply_impulse(-global_transform.forward().as_vec3());
+        // external_force.apply_impulse(transform.rotation * Vec3::Z);
+        external_force.apply_impulse_at_point(transform.rotation * Vec3::Z, Vec3::ZERO, Vec3::Y);
     }
 }
