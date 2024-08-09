@@ -2,12 +2,14 @@ mod debug;
 mod movement;
 mod spaceship;
 mod camera;
+mod ship_shield;
 
 use bevy::prelude::*;
 use avian3d::prelude::*;
 use camera::CameraPlugin;
 use debug::DebugPlugin;
 use movement::MovementPlugin;
+use ship_shield::ShipSheildPlugin;
 use spaceship::SpaceshipPlugin;
 
 fn main() {
@@ -28,6 +30,7 @@ fn main() {
         // User Configured Plugins
         .add_plugins(CameraPlugin)
         .add_plugins(SpaceshipPlugin)
+        .add_plugins(ShipSheildPlugin)
         .add_plugins(MovementPlugin)
         // .add_plugins(DebugPlugin)
         .run();
