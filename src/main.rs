@@ -2,8 +2,9 @@
 #![cfg_attr(not(feature = "dev"), windows_subsystem = "windows")]
 
 use bevy::prelude::*;
-use tinys_itch_playground::AppPlugin;
 
 fn main() -> AppExit {
-    App::new().add_plugins(AppPlugin).run()
+    info!("Hello From Bevy");
+    App::new()
+        .run()
 }
