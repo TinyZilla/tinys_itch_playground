@@ -24,7 +24,7 @@ fn main() -> AppExit {
             ..default()
         })
         .add_systems(Startup, spawn_stuff)
-        .add_systems(Update, move_cube)
+        .add_systems(Update, (move_cube, move_camera))
         .run()
 }
 
@@ -37,11 +37,11 @@ fn move_cube(mut query: Query<&mut Transform, With<ShieldObject>>, key_press: Re
     
     let mut move_factor = 0.;
 
-    if key_press.pressed(KeyCode::KeyQ) {
+    if key_press.pressed(KeyCode::KeyZ) {
         move_factor += MOVE_SPEED;
     }
 
-    if key_press.pressed(KeyCode::KeyE) {
+    if key_press.pressed(KeyCode::KeyC) {
         move_factor -= MOVE_SPEED;
     }
 
@@ -49,6 +49,43 @@ fn move_cube(mut query: Query<&mut Transform, With<ShieldObject>>, key_press: Re
         let mut shield_transform = query.single_mut();
         shield_transform.translation.y += move_factor * time.delta_seconds();
     }
+}
+
+fn move_camera(mut query: Query<&mut Transform, With<Camera3d>>, key_press: Res<ButtonInput<KeyCode>>, time: Res<Time>) {
+    const MOVE_SPEED: f32 = 5.;
+    
+    let mut move_factor = 0.;
+    let mut rotate_factor = 0.;
+
+    if key_press.pressed(KeyCode::KeyW) {
+        move_factor += MOVE_SPEED;
+    }
+
+    if key_press.pressed(KeyCode::KeyS) {
+        move_factor -= MOVE_SPEED;
+    }
+
+    if key_press.pressed(KeyCode::KeyD) {
+        rotate_factor += MOVE_SPEED;
+    }
+
+    if key_press.pressed(KeyCode::KeyA) {
+        rotate_factor -= MOVE_SPEED;
+    }
+
+    if move_factor + rotate_factor != 0. {
+        let mut camera_transform = query.single_mut();
+
+        if move_factor != 0. {
+            let camera_forward = camera_transform.forward().as_vec3();
+            camera_transform.translation += camera_forward * move_factor * time.delta_seconds();    
+        }
+
+        if rotate_factor != 0. {
+            camera_transform.rotate_around(Vec3::ZERO, Quat::from_rotation_y(rotate_factor * time.delta_seconds()));
+        }    
+    }
+
 }
 
 fn spawn_stuff(mut commands: Commands, asset_server: Res<AssetServer>) {
@@ -66,11 +103,22 @@ fn spawn_stuff(mut commands: Commands, asset_server: Res<AssetServer>) {
         ShieldObject
     ));
 
+    commands.spawn((
+        Name::new("Shaded Object"),
+        MaterialMeshBundle {
+            mesh: asset_server.add(Sphere::new(2.).into()),
+            material: custom_mat_handle.clone(),
+            transform: Transform::from_rotation(Quat::from_rotation_y(f32::to_radians(45.0))).with_translation(Vec3::Z * -3.),
+            ..default()
+        },
+        NotShadowCaster,
+    ));
+
     // Spawn the Floor
     commands.spawn((
         Name::new("Floor"),
         MaterialMeshBundle {
-            mesh: asset_server.add(Plane3d::new(Vec3::Y, Vec2::splat(5.0)).into()),
+            mesh: asset_server.add(Plane3d::new(Vec3::Y, Vec2::splat(20.0)).into()),
             material: asset_server.add(StandardMaterial {
                 ..default()
             }),
@@ -82,7 +130,7 @@ fn spawn_stuff(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
     Name::new("Wall"),
     MaterialMeshBundle {
-        mesh: asset_server.add(Plane3d::new(Vec3::Y, Vec2::splat(5.0)).into()),
+        mesh: asset_server.add(Plane3d::new(Vec3::Y, Vec2::splat(20.0)).into()),
         material: asset_server.add(StandardMaterial {
             ..default()
         }),
