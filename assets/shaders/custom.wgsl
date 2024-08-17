@@ -18,26 +18,27 @@ fn fragment(
 
     let distance = 0.5; // Fade Distance in Clip Space....
     let ramp_factor = 5.;
+    let fresnel_power_factor = 4.0;
+    let intersection_back_factor = 0.7;
 
     let intersection_mask = intersection_mask(frag_coord.z, depth, view.clip_from_view, distance, ramp_factor);
+    let fresnel = simple_fersnel(view.world_position.xyz, in.world_position.xyz, in.world_normal);
 
     let is_front_f32 = f32(is_front);
+    let ramped_fresnel = pow(fresnel, fresnel_power_factor) * is_front_f32;
+    let front_back_scalar = is_front_f32 * (1.0 - intersection_back_factor) + intersection_back_factor;
 
-    // Mock Fresnel Implimentation -- https://www.youtube.com/watch?v=a66SysxGebo
-    let V = normalize(view.world_position.xyz - in.world_position.xyz);
-    let NdotV = max(dot(in.world_normal , V), 0.00001);
-    // let NdotV = max(dot(normalize(in.world_normal) , V), 0.00001);
+    let composit = max(ramped_fresnel, intersection_mask * front_back_scalar);
+    let color1 = vec3f(1.0, 1.0, 1.0);
+    return vec4f(color1, composit * 0.8);
+}
 
-    let mock_fresnel = clamp(1.0 - NdotV, 0.0, 1.0) * is_front_f32;
-
-    let ramped_fresnel = pow(mock_fresnel, 1.);
-
-    let composit = max(ramped_fresnel, intersection_mask * (is_front_f32 * 0.8 + 0.2));
-    let color1 = vec3f(0.0, 1.0, 0.0);
-    let color2 = vec3f(1.0, 0.0, 1.0);
-    // var out_color = mix(color_1, color_2);
-    // out_color = frag_coord.xxx * frag_coord.w;
-    return vec4f(mix(color1, color2, composit), 1.0);
+// Mock Fresnel Implimentation -- https://www.youtube.com/watch?v=a66SysxGebo
+fn simple_fersnel(camera_position: vec3f, mesh_position: vec3f, mesh_normal: vec3f) -> f32 {
+    // Get the View Vector
+    let V = normalize(camera_position - mesh_position);
+    let NdotV = max(dot(mesh_normal , V), 0.00001);
+    return clamp(1.0 - NdotV, 0.0, 1.0);
 }
 
 // From Depth Texture explained - Godot https://www.youtube.com/watch?v=wyGWuGQO63Y
